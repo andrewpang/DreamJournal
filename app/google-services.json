@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "729784538307",
+    "firebase_url": "https://dream-journal-a30a1.firebaseio.com",
+    "project_id": "dream-journal-a30a1",
+    "storage_bucket": "dream-journal-a30a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729784538307:android:a78b94f3de2cbd4c",
+        "android_client_info": {
+          "package_name": "com.example.andrewpang.dreamjournal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "729784538307-t50ia4vp0dvkpe3j569ro8r14c7v2hql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.andrewpang.dreamjournal",
+            "certificate_hash": "47FF60443BDC4DBAC46CBC63AA59AEA9CA186F7A"
+          }
+        },
+        {
+          "client_id": "729784538307-tp2j1l2op7uf4j6tuuddhr6v04dovgcq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7Wo1x54Rn8dn5F_XQVdd9ysFMgbmoR94"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729784538307-tp2j1l2op7uf4j6tuuddhr6v04dovgcq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
