@@ -57,6 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
                      // signed in user can be handled in the listener.
                      if (!task.isSuccessful()) {
                          Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                     } else {
+                        goToHomeActivity();
                      }
                  }
              });
@@ -76,8 +78,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.login)
-    void returnToLoginActivity() {
+    void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    void goToHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
 

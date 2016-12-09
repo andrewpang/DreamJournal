@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
@@ -40,6 +41,10 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.register)
     TextView registerTextView;
+    @BindView(R.id.input_email)
+    EditText emailEditText;
+    @BindView(R.id.input_password)
+    EditText passwordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,27 @@ public class LoginActivity extends AppCompatActivity {
         setupFacebookSignInButton();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void setupFirebaseAuthListener() {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -65,9 +91,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    //goToHomeActivity();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    goToLoginActivity();
                 }
 
             }
@@ -93,27 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "facebook:onError", error);
             }
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -152,8 +159,9 @@ public class LoginActivity extends AppCompatActivity {
                          Log.w(TAG, "signInWithEmail", task.getException());
                          Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT)
                               .show();
+                     } else {
+                         goToHomeActivity();
                      }
-
                  }
              });
     }
@@ -161,6 +169,21 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.register)
     void goToRegisterActivity() {
         Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_login)
+    void loginPressed() {
+        signIn(emailEditText.getText().toString(), passwordEditText.getText().toString());
+    }
+
+    void goToHomeActivity() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
+
+    void goToLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
