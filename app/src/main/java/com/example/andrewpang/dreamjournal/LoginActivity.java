@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    //goToHomeActivity();
+                    goToHomeActivity();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");

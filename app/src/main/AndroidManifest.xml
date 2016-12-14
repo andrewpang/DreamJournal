@@ -50,7 +50,7 @@
 
         <receiver android:name=".AlarmReceiver" />
 
-        <activity android:name=".SnoozedActivity"></activity>
+        <activity android:name=".SnoozedActivity" />
     </application>
 
 </manifest>

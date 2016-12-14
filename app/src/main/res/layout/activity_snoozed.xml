@@ -11,7 +11,7 @@
     tools:context="com.example.andrewpang.dreamjournal.SnoozedActivity">
 
     <TextView
-        android:text="TextView"
+        android:text="Snoozing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"

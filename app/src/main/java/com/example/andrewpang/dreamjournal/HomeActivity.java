@@ -3,8 +3,12 @@ package com.example.andrewpang.dreamjournal;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TimePicker;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,11 +19,16 @@ import java.util.Calendar;
 
 public class HomeActivity extends AppCompatActivity {
 
-    AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
+    private ViewPagerAdapter viewPagerAdapter;
 
-    @BindView(R.id.timePicker)
-    TimePicker timePicker;
+    TabLayout.Tab personalFeed;
+    TabLayout.Tab publicFeed;
+    TabLayout.Tab alarmsTab;
+
+    @BindView(R.id.tabs)
+    TabLayout tabs;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +36,47 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        setupTabLayout();
     }
 
-    @OnClick(R.id.btn_logout)
-    void logout() {
-        FirebaseAuth.getInstance().signOut();
+    private void setupTabLayout() {
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        createTabs();
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
-    @OnClick(R.id.btn_set_alarm)
-    void setAlarm() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
-        calendar.set(Calendar.MINUTE, timePicker.getMinute());
+    private void createTabs() {
+        personalFeed = tabs.newTab();
+        publicFeed = tabs.newTab();
+        alarmsTab = tabs.newTab();
 
-        Intent myIntent = new Intent(HomeActivity.this, AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(HomeActivity.this, 0, myIntent, 0);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        personalFeed.setText("My Dreams");
+        publicFeed.setText("Dream Feed");
+        alarmsTab.setText("Alarms");
+
+        tabs.addTab(personalFeed, 0);
+        tabs.addTab(publicFeed, 1);
+        tabs.addTab(alarmsTab, 2);
+
+        tabs.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+        tabs.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.blue_grey_200));
     }
 
 

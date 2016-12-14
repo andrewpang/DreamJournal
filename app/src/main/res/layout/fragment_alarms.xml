@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context=".AlarmsFragment">
+
+    <TimePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/timePicker" />
+
+    <Button
+        android:text="Logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="34dp"
+        android:id="@+id/btn_logout"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Set Alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/timePicker"
+        android:layout_alignStart="@+id/btn_logout"
+        android:layout_marginTop="16dp"
+        android:id="@+id/btn_set_alarm" />
+
+</FrameLayout>
