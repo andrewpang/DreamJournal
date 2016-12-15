@@ -4,7 +4,6 @@
     android:id="@+id/activity_home"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.andrewpang.dreamjournal.HomeActivity">
 
     <android.support.design.widget.TabLayout
