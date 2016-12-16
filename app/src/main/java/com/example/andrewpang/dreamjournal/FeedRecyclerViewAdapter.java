@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.DreamEntryHolder> {
+public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerViewAdapter.DreamEntryHolder> {
 
     private ArrayList<DreamEntry> dataSet;
     private static CardClickListener cardClickListener;
@@ -30,15 +30,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         public void onClick(View v) {
-            cardClickListener.onItemClick(getAdapterPosition(), v);
+            //cardClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
     public static void setCardClickListener(CardClickListener cardClickListener) {
-        RecyclerViewAdapter.cardClickListener = cardClickListener;
+        FeedRecyclerViewAdapter.cardClickListener = cardClickListener;
     }
 
-    public RecyclerViewAdapter(ArrayList<DreamEntry> dataSet) {
+    public FeedRecyclerViewAdapter(ArrayList<DreamEntry> dataSet) {
         this.dataSet = dataSet;
     }
 
