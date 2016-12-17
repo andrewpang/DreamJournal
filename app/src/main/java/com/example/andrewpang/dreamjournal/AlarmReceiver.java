@@ -1,10 +1,9 @@
 package com.example.andrewpang.dreamjournal;
 
-import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import com.example.andrewpang.dreamjournal.Activities.AlarmDialogActivity;
 
 public class AlarmReceiver extends WakefulBroadcastReceiver {
 
@@ -16,10 +15,10 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 //        ringtone.play();
 
 //        Activity activity = (Activity) context;
-//        AlarmDialogFragment dialogFragment = new AlarmDialogFragment();
+//        AlarmDialogActivity dialogFragment = new AlarmDialogActivity();
 //        dialogFragment.show(activity.getFragmentManager(), "Alarm");
 
-        Intent i = new Intent(context, AlarmDialogFragment.class);
+        Intent i = new Intent(context, AlarmDialogActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
     }

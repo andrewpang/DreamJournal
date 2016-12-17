@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="10dp">
 
     <EditText
         android:id="@+id/editTextDialogUserInput"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
+        android:layout_height="wrap_content"
+        android:maxLines="10">
         <requestFocus />
-
     </EditText>
 
-</LinearLayout>
+    <TextView
+        android:layout_below="@id/editTextDialogUserInput"
+        android:layout_toLeftOf="@+id/publicSwitch"
+        android:id="@+id/publicText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Public:"
+        android:textSize="18dp"
+        android:textColor="@color/blue_grey_400"
+        android:layout_marginRight="@dimen/activity_horizontal_margin" />
+
+    <Switch
+        android:layout_below="@id/editTextDialogUserInput"
+        android:id="@+id/publicSwitch"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

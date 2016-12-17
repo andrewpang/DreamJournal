@@ -1,8 +1,8 @@
-package com.example.andrewpang.dreamjournal;
+package com.example.andrewpang.dreamjournal.Entries;
 
 import java.util.Date;
 
-public class DreamEntry {
+public class DreamEntry extends Entry {
     private String entry;
     private Date date;
     private boolean isPublic;

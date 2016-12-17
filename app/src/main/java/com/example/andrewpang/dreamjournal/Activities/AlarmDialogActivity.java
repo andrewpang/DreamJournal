@@ -1,10 +1,8 @@
-package com.example.andrewpang.dreamjournal;
+package com.example.andrewpang.dreamjournal.Activities;
 
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,10 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import com.example.andrewpang.dreamjournal.Activities.HomeActivity;
+import com.example.andrewpang.dreamjournal.Activities.SnoozedActivity;
+import com.example.andrewpang.dreamjournal.AlarmReceiver;
+import com.example.andrewpang.dreamjournal.R;
 
 import java.util.Calendar;
 
-public class AlarmDialogFragment extends Activity {
+public class AlarmDialogActivity extends Activity {
 
     AlarmManager alarmManager;
     Ringtone r;
@@ -53,7 +55,7 @@ public class AlarmDialogFragment extends Activity {
         }
     }
 
-    void setupAlertDialog() {
+    public void setupAlertDialog() {
         View promptView = LayoutInflater.from(this).inflate(R.layout.prompt_layout, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

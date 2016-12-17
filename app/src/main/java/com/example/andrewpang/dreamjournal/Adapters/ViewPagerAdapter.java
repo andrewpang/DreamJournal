@@ -1,8 +1,10 @@
-package com.example.andrewpang.dreamjournal;
+package com.example.andrewpang.dreamjournal.Adapters;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import com.example.andrewpang.dreamjournal.FeedFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -12,16 +14,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return new FeedFragment();
-            case 1:
-                return new FeedFragment();
-            case 2:
-                return new AlarmsFragment();
-            default:
-                return null;
-        }
+        final Bundle args = new Bundle();
+        final FeedFragment feed = new FeedFragment();
+        args.putInt("type", position);
+        feed.setArguments(args);
+        return feed;
     }
 
     @Override

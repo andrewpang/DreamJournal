@@ -1,4 +1,4 @@
-package com.example.andrewpang.dreamjournal;
+package com.example.andrewpang.dreamjournal.Entries;
 
 public class AlarmEntry {
 
