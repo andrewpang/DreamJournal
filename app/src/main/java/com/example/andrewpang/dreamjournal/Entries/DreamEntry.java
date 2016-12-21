@@ -1,5 +1,7 @@
 package com.example.andrewpang.dreamjournal.Entries;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DreamEntry extends Entry {
@@ -30,11 +32,17 @@ public class DreamEntry extends Entry {
 
     //TODO: Convert Date
     public String getDateDay() {
-        return "08";
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        final int day = cal.get(Calendar.DAY_OF_MONTH);
+        return Integer.toString(day);
     }
 
     public String getDateMonth() {
-        return "Nov";
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        final int month = cal.get(Calendar.MONTH);
+        return new SimpleDateFormat("MMM").format(month);
     }
 
     public void setDate(Date date) {

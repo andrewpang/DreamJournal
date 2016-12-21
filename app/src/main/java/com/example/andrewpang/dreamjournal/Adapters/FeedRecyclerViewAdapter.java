@@ -19,6 +19,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<EntryHolder> {
     private static CardClickListener cardClickListener;
     private EntryHolder entryHolder;
     private int type;
+    private static final int ALARM_TYPE = 2;
     private View view;
 
     public interface CardClickListener {
@@ -45,7 +46,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     private int getLayoutIdFromType() {
         switch (type) {
-            case 2:
+            case ALARM_TYPE:
                 return R.layout.alarm_card_view_row;
             default:
                 return R.layout.card_view_row;
@@ -54,7 +55,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     private EntryHolder createEntryHolderFromType() {
         switch (type) {
-            case 2:
+            case ALARM_TYPE:
                 return new AlarmEntryHolder(view);
             default:
                 return new DreamEntryHolder(view);
@@ -64,8 +65,12 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<EntryHolder> {
     @Override
     public void onBindViewHolder(EntryHolder holder, int position) {
         if (entryHolder instanceof DreamEntryHolder){
-            ((DreamEntryHolder) entryHolder).dateTextView.setText(((DreamEntry) dataSet.get(position)).getDateDay());
-            ((DreamEntryHolder) entryHolder).dreamTextView.setText(((DreamEntry) dataSet.get(position)).getEntry());
+            final DreamEntryHolder dreamEntryHolder = (DreamEntryHolder) entryHolder;
+            final DreamEntry dreamEntry = (DreamEntry) dataSet.get(position);
+
+            dreamEntryHolder.dateTextView.setText(dreamEntry.getDateDay());
+            dreamEntryHolder.monthTextView.setText(dreamEntry.getDateMonth());
+            dreamEntryHolder.dreamTextView.setText(dreamEntry.getEntry());
         }
 
     }
@@ -73,13 +78,11 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<EntryHolder> {
     public void addItem(Entry dataObj, int index) {
         dataSet.add(index, dataObj);
         notifyItemInserted(index);
-        notifyDataSetChanged();
     }
 
     public void deleteItem(int index) {
         dataSet.remove(index);
         notifyItemRemoved(index);
-        notifyDataSetChanged();
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.example.andrewpang.dreamjournal.Adapters.FeedRecyclerViewAdapter;
 import com.example.andrewpang.dreamjournal.Entries.AlarmEntry;
 import com.example.andrewpang.dreamjournal.Entries.DreamEntry;
 import com.example.andrewpang.dreamjournal.Entries.Entry;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,11 +35,14 @@ public class FeedFragment extends Fragment {
 
     private View view;
     private int type;
+    private static final int ALARM_TYPE = 2;
     private RecyclerView.Adapter recyclerViewAdapter;
     private FloatingActionButton addButton;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private int hour, minute;
+    private DatabaseReference mDatabase;
+    private LinearLayoutManager llm;
 
     public FeedFragment() {
     }
@@ -46,13 +51,13 @@ public class FeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_feed, container, false);
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         type = getArguments().getInt("type");
         recyclerViewAdapter = new FeedRecyclerViewAdapter(type, mockDreamEntries());
-
         setupRecyclerView(recyclerViewAdapter);
-        //if 3rd
-        setupAddAlarmDialog();
+        setupAddButton();
+
         return view;
     }
 
@@ -60,7 +65,7 @@ public class FeedFragment extends Fragment {
         final RecyclerView feedRecyclerView = ButterKnife.findById(view, R.id.feed_recycler_view);
         feedRecyclerView.setHasFixedSize(true);
         feedRecyclerView.setAdapter(recyclerViewAdapter);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(getActivity());
         feedRecyclerView.setLayoutManager(llm);
     }
 
@@ -68,7 +73,11 @@ public class FeedFragment extends Fragment {
         addButton = (FloatingActionButton) view.findViewById(R.id.add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                showEntryDialog();
+                if (type == ALARM_TYPE) {
+                    showTimeDialog();
+                } else {
+                    showEntryDialog();
+                }
             }
         });
     }
@@ -89,8 +98,7 @@ public class FeedFragment extends Fragment {
                 // User clicked OK button
                 final Date date = new Date();
                 final DreamEntry dreamEntry = new DreamEntry(userInput.getText().toString(), date, publicSwitch.isChecked());
-                FeedRecyclerViewAdapter feedRecyclerViewAdapter = (FeedRecyclerViewAdapter) recyclerViewAdapter;
-                feedRecyclerViewAdapter.addItem(dreamEntry, 0);
+                addNewDreamEntry(dreamEntry);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -105,26 +113,22 @@ public class FeedFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawableResource(R.color.blue_grey_800);
     }
 
-    private void setupAddAlarmDialog() {
+    private void showTimeDialog() {
         final Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
-        addButton = (FloatingActionButton) view.findViewById(R.id.add_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog
+                .OnTimeSetListener() {
 
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        setAlarm(hourOfDay, minute);
-                    }
-                }, hour, minute, false);
-                timePickerDialog.show();
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                setAlarm(hourOfDay, minute);
             }
-        });
+        }, hour, minute, false);
+        timePickerDialog.show();
     }
 
-    void setAlarm(int hour, int minute) {
+    private void setAlarm(int hour, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
@@ -134,12 +138,18 @@ public class FeedFragment extends Fragment {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
+    private void addNewDreamEntry(DreamEntry dreamEntry) {
+        FeedRecyclerViewAdapter feedRecyclerViewAdapter = (FeedRecyclerViewAdapter) recyclerViewAdapter;
+        feedRecyclerViewAdapter.addItem(dreamEntry, 0);
+        llm.scrollToPosition(0);
+    }
+
     private ArrayList<Entry> mockDreamEntries() {
         ArrayList<Entry> dreamEntries = new ArrayList<>();
-        dreamEntries.add(new DreamEntry("Hey", Calendar.getInstance().getTime(), true));
-        dreamEntries.add(new DreamEntry("Hey this a dream aaslkdfjlask jdf;laksjdf;lashf;kj sdkfljl skdljf sdfjkl skdjlflj sdfkljsdj sldfkjsdflksjf slkdjflksdfjkldf slkdfjslkdjflk slkfjdkls aslfkj;asf a;sldkfj;slkafj lskdjfkldjsflkj", Calendar.getInstance().getTime(), true));
-        dreamEntries.add(new DreamEntry("Hey, nightmare man", Calendar.getInstance().getTime(), true));
-        dreamEntries.add(new DreamEntry("Hey", Calendar.getInstance().getTime(), true));
+//        dreamEntries.add(new DreamEntry("Hi", Calendar.getInstance().getTime(), true));
+//        dreamEntries.add(new DreamEntry("Hey this a dream aaslkdfjlask jdf;laksjdf;lashf;kj sdkfljl skdljf sdfjkl skdjlflj sdfkljsdj sldfkjsdflksjf slkdjflksdfjkldf slkdfjslkdjflk slkfjdkls aslfkj;asf a;sldkfj;slkafj lskdjfkldjsflkj", Calendar.getInstance().getTime(), true));
+//        dreamEntries.add(new DreamEntry("Hey, nightmare man", Calendar.getInstance().getTime(), true));
+//        dreamEntries.add(new DreamEntry("Hy", Calendar.getInstance().getTime(), true));
         return dreamEntries;
     }
 
