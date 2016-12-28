@@ -1,21 +1,35 @@
 package com.example.andrewpang.dreamjournal.Entries;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+@IgnoreExtraProperties
 public class DreamEntry extends Entry {
     private String entry;
-    private Date date;
     private boolean isPublic;
+    private long dateSince1970;
+    private Date date;
+
 
     public DreamEntry() {
     }
 
-    public DreamEntry(String entry, Date date, boolean isPublic) {
+    public DreamEntry(String entry, boolean isPublic, Date date) {
         this.entry = entry;
         this.date = date;
         this.isPublic = isPublic;
+        setDateSince1970();
+    }
+
+    public DreamEntry(String entry, boolean isPublic, long dateSince1970) {
+        this.entry = entry;
+        this.isPublic = isPublic;
+        this.dateSince1970 = dateSince1970;
+        this.date = new Date(dateSince1970);
     }
 
     public String getEntry() {
@@ -26,23 +40,27 @@ public class DreamEntry extends Entry {
         this.entry = entry;
     }
 
+    public long getDateSince1970() {
+        return dateSince1970;
+    }
+
+    public void setDateSince1970() {
+        this.dateSince1970 = CalendarUtil.getTimeSince1970FromDate(this.date);
+    }
+
+    @Exclude
     public Date getDate() {
         return date;
     }
 
-    //TODO: Convert Date
+    @Exclude
     public String getDateDay() {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        final int day = cal.get(Calendar.DAY_OF_MONTH);
-        return Integer.toString(day);
+        return CalendarUtil.getDayNumberFromDate(this.date);
     }
 
+    @Exclude
     public String getDateMonth() {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        final int month = cal.get(Calendar.MONTH);
-        return new SimpleDateFormat("MMM").format(month);
+        return CalendarUtil.getMonthFromDate(this.date);
     }
 
     public void setDate(Date date) {

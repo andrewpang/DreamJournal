@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,14 @@ import com.example.andrewpang.dreamjournal.Adapters.FeedRecyclerViewAdapter;
 import com.example.andrewpang.dreamjournal.Entries.AlarmEntry;
 import com.example.andrewpang.dreamjournal.Entries.DreamEntry;
 import com.example.andrewpang.dreamjournal.Entries.Entry;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,16 +40,21 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class FeedFragment extends Fragment {
 
+    private static final int ALARM_TYPE = 2;
+
+    private static final String TAG = "FEED_FRAGMENT";
     private View view;
     private int type;
-    private static final int ALARM_TYPE = 2;
     private RecyclerView.Adapter recyclerViewAdapter;
     private FloatingActionButton addButton;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private int hour, minute;
     private DatabaseReference mDatabase;
+    private FirebaseUser user;
     private LinearLayoutManager llm;
+    private ValueEventListener valueEventListener;
+    private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
 
     public FeedFragment() {
     }
@@ -52,13 +64,81 @@ public class FeedFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_feed, container, false);
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         type = getArguments().getInt("type");
         recyclerViewAdapter = new FeedRecyclerViewAdapter(type, mockDreamEntries());
         setupRecyclerView(recyclerViewAdapter);
         setupAddButton();
+        if(type != ALARM_TYPE){
+            setupDreamEntryValueEventListener();
+        }
+
+        //getDreamEntries();
 
         return view;
+    }
+
+    private void getDreamEntries() {
+        mDatabase.child("DreamEntries").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, dataSnapshot.toString());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+               // Log.d(TAG, dataSnapshot.toString());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setupDreamEntryValueEventListener() {
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                for(DataSnapshot entrySnapshot: dataSnapshot.getChildren()){
+                    final String entry = (String) entrySnapshot.child("entry").getValue();
+                    final boolean isPublic = (Boolean) entrySnapshot.child("public").getValue();
+                    final long dateSince1970 = (long) entrySnapshot.child("dateSince1970").getValue();
+                    final DreamEntry dreamEntry = new DreamEntry(entry, isPublic, dateSince1970);
+
+                    addEntryView(dreamEntry);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.child("DreamEntries").child(user.getUid()).addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    private void addEntryView(DreamEntry dreamEntry){
+        feedRecyclerViewAdapter = (FeedRecyclerViewAdapter) recyclerViewAdapter;
+        feedRecyclerViewAdapter.addItem(dreamEntry, 0);
+        llm.scrollToPosition(0);
     }
 
     private void setupRecyclerView(RecyclerView.Adapter recyclerViewAdapter) {
@@ -97,8 +177,8 @@ public class FeedFragment extends Fragment {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
                 final Date date = new Date();
-                final DreamEntry dreamEntry = new DreamEntry(userInput.getText().toString(), date, publicSwitch.isChecked());
-                addNewDreamEntry(dreamEntry);
+                final DreamEntry dreamEntry = new DreamEntry(userInput.getText().toString(), publicSwitch.isChecked(), date);
+                postNewDreamEntry(dreamEntry);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -138,10 +218,13 @@ public class FeedFragment extends Fragment {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
-    private void addNewDreamEntry(DreamEntry dreamEntry) {
-        FeedRecyclerViewAdapter feedRecyclerViewAdapter = (FeedRecyclerViewAdapter) recyclerViewAdapter;
-        feedRecyclerViewAdapter.addItem(dreamEntry, 0);
-        llm.scrollToPosition(0);
+    private void postNewDreamEntry(DreamEntry dreamEntry) {
+        addEntryView(dreamEntry);
+
+        mDatabase.child(user.getUid()).push().setValue(dreamEntry);
+        if (dreamEntry.isPublic()) {
+            mDatabase.child("publicFeed").push().child(user.getUid()).setValue(dreamEntry);
+        }
     }
 
     private ArrayList<Entry> mockDreamEntries() {
